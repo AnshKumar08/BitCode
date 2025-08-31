@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeHub - Study Groups</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <h1>CodeHub</h1>
+        <nav>
+          <a href="./problem.html">Problems</a>
+          <a href="#" class="active">Study Groups</a>
+          <a href="./contests.html">Contests</a>
+          <a href="">Discuss</a>
+          <a href="#">Explore</a>
+          <a href="./login.html">Profile</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <a href="#" id="auth-button" class="btn-auth">Log In / Sign Up</a>
+
+        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="groups-header">
+        <h2>Find or Create a Study Group</h2>
+        <button id="show-create-form-btn">Create New Group</button>
+      </div>
+
+      <form id="create-group-form" class="hidden">
+        <h3>Create a New Group</h3>
+        <input type="text" id="group-name" placeholder="Group Name" required />
+        <textarea
+          id="group-description"
+          placeholder="Group Description"
+          required
+        ></textarea>
+        <div class="form-actions">
+          <button type="submit">Save Group</button>
+          <button type="button" id="cancel-create-btn">Cancel</button>
+        </div>
+      </form>
+
+      <section id="groups-list"></section>
+    </main>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>

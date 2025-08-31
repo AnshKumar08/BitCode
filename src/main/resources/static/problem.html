@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeHub - Problems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <h1><a href="index.html">CodeHub</a></h1>
+        <nav>
+          <a href="problems.html" class="active">Problems</a>
+          <a href="index.html">Study Groups</a>
+          <a href="contests.html">Contests</a>
+          <a href="discuss.html">Discuss</a>
+          <a href="explore.html">Explore</a>
+          <a href="profile.html">Profile</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <a href="login.html" id="auth-button" class="btn-auth"
+          >Log In / Sign Up</a
+        >
+        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2>Problem Set</h2>
+      <table class="problems-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Topic</th>
+            <th>Difficulty</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#">Two Sum</a></td>
+            <td>Arrays</td>
+            <td class="difficulty-easy">Easy</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="#">Longest Substring Without Repeating Characters</a>
+            </td>
+            <td>Sliding Window</td>
+            <td class="difficulty-medium">Medium</td>
+          </tr>
+          <tr>
+            <td><a href="#">Median of Two Sorted Arrays</a></td>
+            <td>Binary Search</td>
+            <td class="difficulty-hard">Hard</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
