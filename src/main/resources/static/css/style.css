@@ -368,3 +368,114 @@ header nav {
   color: inherit;
   text-decoration: none;
 }
+
+/* 9. Explore Page Styles */
+.page-title {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.page-title h2 {
+  margin-bottom: 0.5rem;
+}
+.page-title p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.explore-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.explore-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px var(--shadow-color);
+}
+.explore-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+.explore-card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.explore-card span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+.progress {
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+}
+
+/* 10. Discuss Page Styles */
+.discuss-list {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  overflow: hidden;
+}
+
+.discuss-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.discuss-item:last-child {
+  border-bottom: none;
+}
+.post-details h4 {
+  margin: 0 0 0.5rem 0;
+}
+.post-details h4 a {
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 600;
+}
+.post-details h4 a:hover {
+  color: var(--primary-color);
+}
+.post-tags {
+  display: flex;
+  gap: 0.5rem;
+}
+.tag {
+  background-color: var(--bg-color);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+.post-stats {
+  display: flex;
+  gap: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: right;
+}
+.stat-count {
+  display: block;
+  color: var(--text-color);
+  font-weight: 600;
+}
