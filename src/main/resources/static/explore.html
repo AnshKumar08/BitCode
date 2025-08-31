@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeHub - Explore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <h1><a href="index.html">CodeHub</a></h1>
+        <nav>
+          <a href="problems.html">Problems</a>
+          <a href="index.html">Study Groups</a>
+          <a href="contests.html">Contests</a>
+          <a href="discuss.html">Discuss</a>
+          <a href="explore.html" class="active">Explore</a>
+          <a href="profile.html">Profile</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <a href="login.html" id="auth-button" class="btn-auth"
+          >Log In / Sign Up</a
+        >
+        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-title">
+        <h2>Explore Topics</h2>
+        <p>Curated problem sets to master key concepts.</p>
+      </div>
+
+      <div class="explore-grid">
+        <div class="explore-card">
+          <h3>Top Interview Questions</h3>
+          <p>
+            A collection of the most frequently asked questions in tech
+            interviews.
+          </p>
+          <div class="progress-bar">
+            <div class="progress" style="width: 75%"></div>
+          </div>
+          <span>75/100 Completed</span>
+        </div>
+        <div class="explore-card">
+          <h3>Data Structures Crash Course</h3>
+          <p>Master arrays, linked lists, trees, graphs, and more.</p>
+          <div class="progress-bar">
+            <div class="progress" style="width: 40%"></div>
+          </div>
+          <span>20/50 Completed</span>
+        </div>
+        <div class="explore-card">
+          <h3>Dynamic Programming Fundamentals</h3>
+          <p>Learn the patterns to solve any DP problem.</p>
+          <div class="progress-bar">
+            <div class="progress" style="width: 10%"></div>
+          </div>
+          <span>5/50 Completed</span>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
