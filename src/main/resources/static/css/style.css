@@ -131,7 +131,8 @@ button:hover {
   margin-bottom: 2rem;
 }
 
-#create-group-form {
+#create-group-form,
+#create-post-form{
   background-color: var(--card-bg);
   padding: 2rem;
   border-radius: 12px;
@@ -143,17 +144,20 @@ button:hover {
   box-shadow: 0 4px 12px var(--shadow-color);
 }
 
-#create-group-form.hidden {
+/* This rule now hides ANY element with class="hidden" */
+#create-group-form.hidden,
+#create-post-form.hidden {
   display: none;
 }
-
 #create-group-form h3 {
   margin: 0 0 1rem 0;
   font-weight: 600;
 }
 
 #create-group-form input,
-#create-group-form textarea {
+#create-group-form textarea,
+#create-post-form input,
+#create-post-form textarea {
   width: 97%;
   padding: 0.8rem 1rem;
   border-radius: 8px;

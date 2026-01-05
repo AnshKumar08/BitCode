@@ -1,7 +1,5 @@
-// src/main/java/com/yourplatform/leetcodeclone/model/User.java
 package com.yourplatform.leetcodeclone.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference; // <-- Import this
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,6 +27,6 @@ public class User {
     @ManyToMany(mappedBy = "members")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @JsonBackReference // <-- Add this annotation
+    // @JsonBackReference removed
     private Set<StudyGroup> studyGroups = new HashSet<>();
 }

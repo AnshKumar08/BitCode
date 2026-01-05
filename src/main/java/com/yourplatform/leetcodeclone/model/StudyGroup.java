@@ -1,7 +1,5 @@
-// src/main/java/com/yourplatform/leetcodeclone/model/StudyGroup.java
 package com.yourplatform.leetcodeclone.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference; // <-- Import this
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.HashSet;
@@ -16,12 +14,12 @@ public class StudyGroup {
     private String name;
     private String description;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany // Removed FetchType.EAGER (default is LAZY)
     @JoinTable(
             name = "group_members",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonManagedReference // <-- Add this annotation
+    // @JsonManagedReference removed
     private Set<User> members = new HashSet<>();
 }

@@ -1,22 +1,37 @@
 package com.yourplatform.leetcodeclone.controller;
 
-import com.yourplatform.leetcodeclone.model.Problem;
-import com.yourplatform.leetcodeclone.repository.ProblemRepository;
+import com.yourplatform.leetcodeclone.dto.ProblemDetailDto; // Import
+import com.yourplatform.leetcodeclone.dto.ProblemDto;
+import com.yourplatform.leetcodeclone.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity; // Import
+import org.springframework.web.bind.annotation.*; // Import
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/problems")
 public class ProblemController {
 
     @Autowired
-    private ProblemRepository problemRepository;
+    private ProblemService problemService;
 
     @GetMapping
-    public List<Problem> getAllProblems() {
-        return problemRepository.findAll();
+    public List<ProblemDto> getAllProblems() {
+        return problemService.getAllProblems();
+    }
+
+    /**
+     * NEW ENDPOINT
+     * Gets a single problem by its ID.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ProblemDetailDto> getProblemById(@PathVariable Long id) {
+        try {
+            ProblemDetailDto problem = problemService.findProblemById(id);
+            return ResponseEntity.ok(problem);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
