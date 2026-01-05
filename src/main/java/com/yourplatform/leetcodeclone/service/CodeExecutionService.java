@@ -41,7 +41,7 @@ public class CodeExecutionService {
             Problem problem = problemRepository.findById(runRequest.getProblemId())
                     .orElseThrow(() -> new RuntimeException("Problem not found"));
 
-            String stdin = problem.getTestCaseInput();
+            String stdin = problem.getTestCaseInput().replace("\\n", "\n");
             String expectedOutput = problem.getTestCaseOutput();
 
             Integer languageId = LANGUAGE_IDS.get(runRequest.getLanguage().toLowerCase());
@@ -131,6 +131,15 @@ public class CodeExecutionService {
                 .map(tc -> {
                     CodeRunResult result = runSingleTest(code, language, tc.input);
                     boolean passed = outputsMatch(result.getOutput(), tc.expected);
+
+                    // DEBUG LOGS
+                    System.err.println("=== TEST CASE ===");
+                    System.err.println("Input: " + tc.input);
+                    System.err.println("Expected: '" + tc.expected + "'");
+                    System.err.println("Your Output: '" + result.getOutput() + "'");
+                    System.err.println("Match: " + passed);
+                    System.err.println("==================");
+
                     return new TestCaseResult(tc, result, passed);
                 })
                 .collect(Collectors.toList());
@@ -143,10 +152,13 @@ public class CodeExecutionService {
                 return createErrorResult("Unsupported language: " + language);
             }
 
+            // Properly handle newlines in input
+            String stdin = customInput.replace("\\n", "\n");
+
             Judge0SubmissionRequest submission = new Judge0SubmissionRequest(
                     code,
                     languageId,
-                    customInput
+                    stdin
             );
 
             HttpHeaders headers = new HttpHeaders();
@@ -182,9 +194,16 @@ public class CodeExecutionService {
 
     // ============= HELPERS =============
     private boolean outputsMatch(String actual, String expected) {
-        if (actual == null || expected == null) return false;
+        if (actual == null || expected == null) {
+            System.err.println("NULL COMPARISON: actual=" + actual + ", expected=" + expected);
+            return false;
+        }
+
         String cleanActual = actual.replaceAll("\\s+", "").trim();
         String cleanExpected = expected.replaceAll("\\s+", "").trim();
+
+        System.err.println("COMPARING: actual='" + cleanActual + "' vs expected='" + cleanExpected + "'");
+
         return cleanActual.equals(cleanExpected);
     }
 
