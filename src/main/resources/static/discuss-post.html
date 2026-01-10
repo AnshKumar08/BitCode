@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeHub - Discussion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <div class="header-left">
+        <h1><a href="study-groups.html">CodeHub</a></h1>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="problem.html">Problems</a>
+            <a href="study-groups.html">Study Groups</a>
+            <a href="contests.html">Contests</a>
+            <a href="discuss.html" class="active">Discuss</a>
+            <a href="explore.html">Explore</a>
+        </nav>
+    </div>
+    <div class="header-right">
+        <a href="login.html" id="auth-button" class="btn-auth">Log In / Sign Up</a>
+        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+    </div>
+</header>
+
+<main class="container">
+    <div id="post-header" style="margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)">
+        <h1 id="post-title">Loading Post...</h1>
+        <div id="post-stats" style="color:var(--text-muted);font-size:0.9rem">
+            Loading...
+        </div>
+    </div>
+
+    <div id="post-content" style="background:var(--card-bg);padding:2rem;border-radius:12px;margin-bottom:2rem">
+        Loading post content...
+    </div>
+
+    <h3>Comments (<span id="comment-count">0</span>)</h3>
+    <div id="comments-list" style="min-height:200px"></div>
+
+    <form id="comment-form" style="margin-top:2rem;padding:2rem;background:var(--card-bg);border-radius:12px">
+        <h4>Add Comment</h4>
+        <textarea id="comment-input" placeholder="Share your thoughts..." rows="4"
+                  style="width:100%;padding:1rem;border:1px solid var(--border-color);border-radius:8px"></textarea>
+        <div style="margin-top:1rem">
+            <button type="submit"
+                    style="background:var(--primary-color);color:white;padding:0.75rem 1.5rem;border:none;border-radius:8px">
+                Post Comment
+            </button>
+        </div>
+    </form>
+</main>
+
+<script src="js/app.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id') || 1;
+    const userId = 1; // Mock user ID - replace with real auth later
+
+    const titleEl = document.getElementById('post-title');
+    const statsEl = document.getElementById('post-stats');
+    const contentEl = document.getElementById('post-content');
+    const commentsCountEl = document.getElementById('comment-count');
+    const commentsListEl = document.getElementById('comments-list');
+    const commentForm = document.getElementById('comment-form');
+    const commentInput = document.getElementById('comment-input');
+
+    async function loadPost() {
+      try {
+        const res = await fetch(`/api/posts/${postId}`);
+        if (!res.ok) throw new Error('Post not found');
+        const post = await res.json();
+
+        titleEl.textContent = post.title;
+        contentEl.innerHTML = `<p>${post.content}</p>`;
+
+        statsEl.innerHTML = `
+          <button onclick="votePost()" style="background:none;border:none;color:var(--text-muted);margin-right:1rem;cursor:pointer;">
+            👍 ${post.votes}
+          </button>
+          <button onclick="scrollToComments()" style="background:none;border:none;color:var(--text-muted);margin-right:1rem;cursor:pointer;">
+            💬 ${post.replies || 0} replies
+          </button>
+          <button onclick="viewPost()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;">
+            👁️ ${post.views || 0}
+          </button>
+        `;
+      } catch (e) {
+        titleEl.textContent = 'Post Not Found';
+        contentEl.textContent = '';
+        statsEl.textContent = '';
+      }
+    }
+
+    async function loadComments() {
+      try {
+        const res = await fetch(`/api/posts/${postId}/comments`);
+        if (!res.ok) throw new Error('Failed to load comments');
+        const comments = await res.json();
+
+        commentsCountEl.textContent = comments.length.toString();
+        commentsListEl.innerHTML =
+          comments.map(c => `
+            <div style="padding:1.5rem;margin:1rem 0;background:var(--bg-color);border-left:4px solid var(--primary-color);border-radius:8px">
+              <div style="font-weight:600;margin-bottom:0.5rem">${c.author}</div>
+              <p style="margin-bottom:1rem">${c.content}</p>
+              <div style="color:var(--text-muted);font-size:0.85rem">
+                ${c.createdAt ? new Date(c.createdAt).toLocaleString() : ''}
+              </div>
+            </div>
+          `).join('') ||
+          '<p style="color:var(--text-muted)">No comments yet. Be first!</p>';
+      } catch (e) {
+        commentsListEl.innerHTML = '<p>Error loading comments</p>';
+      }
+    }
+
+    async function votePost() {
+      try {
+        const res = await fetch(`/api/posts/${postId}/vote?userId=${userId}`, { method: 'POST' });
+
+        if (!res.ok) throw new Error('Failed to toggle like');
+
+        await loadPost();
+      } catch (e) {
+        alert('Error liking post');
+      }
+    }
+
+    async function viewPost() {
+      try {
+        const res = await fetch(`/api/posts/${postId}/view?userId=${userId}`, { method: 'POST' });
+
+        if (!res.ok) throw new Error('Failed to view');
+
+        await loadPost();
+      } catch (e) {
+        alert('Error viewing post');
+      }
+    }
+
+    function scrollToComments() {
+      const el = document.getElementById('comments-list');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (commentForm) {
+      commentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const content = commentInput.value;
+        if (!content.trim()) return;
+
+        try {
+          const res = await fetch(`/api/posts/${postId}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: content.trim(), authorId: userId })
+          });
+          if (!res.ok) throw new Error('Failed to add comment');
+
+          commentInput.value = '';
+          await loadComments();
+          await loadPost();
+        } catch (err) {
+          alert('Failed to post comment');
+        }
+      });
+    }
+
+    loadPost();
+    loadComments();
+</script>
+</body>
+</html>

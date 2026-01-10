@@ -1,37 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>CodeHub - Contests</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header>
-      <div class="header-left">
-        <h1><a href="index.html">CodeHub</a></h1>
-        <nav>
-          <a href="problem.html">Problems</a>
-          <a href="index.html">Study Groups</a>
-          <a href="contests.html" class="active">Contests</a>
-          <a href="discuss.html">Discuss</a>
-          <a href="explore.html">Explore</a>
-          <a href="profile.html">Profile</a>
-        </nav>
-      </div>
-      <div class="header-right">
-        <a href="login.html" id="auth-button" class="btn-auth"
-          >Log In / Sign Up</a
-        >
-        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeHub - Contests</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/auth-guard.js"></script>
 
-    <main class="container">
-      <h2>Contests</h2>
-      <div class="placeholder-content">
-        <p>Upcoming contests will be displayed here.</p>
-      </div>
-    </main>
+  <style>
+    .contests-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .contests-header h2 { margin: 0; }
 
-    <script src="js/app.js"></script>
-  </body>
+    .btn-create {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(33, 128, 141, 0.3); }
+
+    .contests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .contest-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .contest-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border-color: var(--primary-color);
+    }
+
+    .contest-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+    .contest-status {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.8rem;
+    }
+    .status-draft { background: rgba(158, 158, 158, 0.15); color: #9e9e9e; }
+    .status-ongoing { background: rgba(76, 175, 80, 0.15); color: #4CAF50; animation: pulse 2s infinite; }
+    .status-completed { background: rgba(33, 128, 141, 0.15); color: var(--primary-color); }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+    .contest-topics { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .topic-tag { background: var(--primary-color); color: white; padding: 0.3rem 0.7rem; border-radius: 4px; font-size: 0.75rem; }
+
+    .contest-details {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+    .detail-item { text-align: center; font-size: 0.85rem; }
+    .detail-value { font-weight: 600; color: var(--primary-color); }
+    .detail-label { color: var(--text-muted); font-size: 0.75rem; }
+
+    .btn-join {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 1rem;
+      transition: all 0.3s;
+    }
+    .btn-join:hover { opacity: 0.9; }
+
+    .no-contests { text-align: center; padding: 3rem; color: var(--text-muted); }
+
+    /* Contest Info Modal */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
+    .modal.show { display: flex; align-items: center; justify-content: center; }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+    .modal-body { color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+    .modal-info { background: rgba(33, 128, 141, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+    .modal-info div { padding: 0.5rem 0; font-weight: 500; }
+
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel { background: #6b7280; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-start { background: var(--primary-color); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <h1><a href="index.html">CodeHub</a></h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="problem.html">Problems</a>
+      <a href="study-groups.html">Study Groups</a>
+      <a href="contests.html" class="active">Contests</a>
+      <a href="discuss.html">Discuss</a>
+      <a href="explore.html">Explore</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="login.html" id="auth-button" class="btn-auth">Log In / Sign Up</a>
+    <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+  </div>
+</header>
+
+<main class="container" style="padding-top: 2rem">
+  <div class="contests-header">
+    <h2>Contests</h2>
+    <button class="btn-create" onclick="window.location.href='create-contest.html'">+ Create Contest</button>
+  </div>
+
+  <div class="contests-grid" id="contests-container">
+    <!-- Populated by JS -->
+  </div>
+
+  <div id="no-contests" class="no-contests" style="display:none">
+    <p>No contests yet. Create one to get started!</p>
+  </div>
+</main>
+
+<!-- ✅ Contest Info Modal -->
+<div id="contest-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header" id="modal-title">Contest Details</div>
+    <div class="modal-body" id="modal-description"></div>
+    <div class="modal-info" id="modal-info"></div>
+    <div class="modal-buttons">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-start" onclick="startContest()">Start Contest</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+  let selectedContestId = null;
+
+  async function loadContests() {
+    try {
+      const res = await fetch('/api/contests');
+      if (!res.ok) throw new Error('Failed to load contests');
+      const contests = await res.json();
+
+      if (contests.length === 0) {
+        document.getElementById('no-contests').style.display = 'block';
+        return;
+      }
+
+      const container = document.getElementById('contests-container');
+      container.innerHTML = contests.map(c => `
+        <div class="contest-card">
+          <div class="contest-status status-${c.status.toLowerCase()}">
+            ${c.status}
+          </div>
+          <div class="contest-title">${c.title}</div>
+          <div class="contest-topics">
+            ${c.selectedTopics.split(',').map(t => `<span class="topic-tag">${t.trim()}</span>`).join('')}
+          </div>
+          <div class="contest-details">
+            <div class="detail-item">
+              <div class="detail-value">${c.questionCount}</div>
+              <div class="detail-label">Questions</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-value">${c.durationMinutes}</div>
+              <div class="detail-label">Minutes</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-value">${c.difficulty}</div>
+              <div class="detail-label">Level</div>
+            </div>
+          </div>
+          <button class="btn-join" onclick="showContestModal(${c.id}, '${c.title}', ${c.questionCount}, ${c.durationMinutes})">
+            ${c.status === 'DRAFT' ? 'Start Contest' : 'View Contest'}
+          </button>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.error('Error loading contests:', e);
+    }
+  }
+
+  function showContestModal(id, title, questions, duration) {
+    selectedContestId = id;
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-description').textContent =
+      `This contest has ${questions} problem(s) and you have ${duration} minutes to solve them. Your score will be calculated based on the number of problems solved correctly.`;
+    document.getElementById('modal-info').innerHTML = `
+      <div>📊 Questions: ${questions}</div>
+      <div>⏱️  Duration: ${duration} minutes</div>
+      <div>✅ Scoring: 10 points per correct solution</div>
+    `;
+    document.getElementById('contest-modal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('contest-modal').classList.remove('show');
+    selectedContestId = null;
+  }
+
+  function startContest() {
+    if (selectedContestId) {
+      window.location.href = `contest-detail.html?id=${selectedContestId}`;
+    }
+  }
+
+  // Close modal on background click
+  document.getElementById('contest-modal').onclick = (e) => {
+    if (e.target.id === 'contest-modal') closeModal();
+  };
+
+  loadContests();
+</script>
+</body>
 </html>

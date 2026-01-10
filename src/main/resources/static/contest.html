@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeHub - Contest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.13/ace.min.css">
+    <style>
+        .contest-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
+          height: calc(100vh - 80px);
+          margin-top: 0;
+        }
+        .contest-left {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          overflow-y: auto;
+          padding-right: 1rem;
+        }
+        .timer {
+          background: var(--card-bg);
+          padding: 1rem;
+          border-radius: 8px;
+          border: 2px solid var(--primary-color);
+          text-align: center;
+          font-size: 2rem;
+          font-weight: 700;
+          color: var(--primary-color);
+        }
+        .timer.warning {
+          border-color: #FFC107;
+          color: #FFC107;
+        }
+        .timer.danger {
+          border-color: #F44336;
+          color: #F44336;
+          animation: blink 0.5s infinite;
+        }
+        @keyframes blink {
+          0%, 50% { opacity: 1; }
+          51%, 100% { opacity: 0.5; }
+        }
+        .problems-list {
+          background: var(--card-bg);
+          border-radius: 8px;
+          padding: 1rem;
+        }
+        .problems-list h3 {
+          margin-top: 0;
+        }
+        .problem-item {
+          padding: 0.75rem;
+          background: var(--surface);
+          margin-bottom: 0.5rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+          border-left: 4px solid transparent;
+        }
+        .problem-item:hover {
+          background: var(--bg-color);
+        }
+        .problem-item.active {
+          border-left-color: var(--primary-color);
+          background: var(--bg-color);
+        }
+        .contest-right {
+          display: flex;
+          flex-direction: column;
+        }
+        .editor-header {
+          background: var(--card-bg);
+          padding: 1rem;
+          border-radius: 8px 8px 0 0;
+          border-bottom: 1px solid var(--border-color);
+        }
+        .editor-header h3 {
+          margin: 0 0 0.5rem 0;
+        }
+        #ace-editor {
+          flex: 1;
+          border-radius: 0 0 8px 8px;
+        }
+        .editor-actions {
+          padding: 1rem;
+          background: var(--card-bg);
+          border-radius: 0 0 8px 8px;
+          display: flex;
+          gap: 1rem;
+          margin-top: -8px;
+        }
+        .btn-submit {
+          flex: 1;
+          padding: 0.75rem;
+          background: var(--primary-color);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+        }
+        .btn-submit:hover {
+          opacity: 0.9;
+        }
+        .btn-complete {
+          flex: 1;
+          padding: 0.75rem;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+        }
+        @media (max-width: 1024px) {
+          .contest-container {
+            grid-template-columns: 1fr;
+            height: auto;
+          }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-left">
+        <h1><a href="study-groups.html">CodeHub</a></h1>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="problem.html">Problems</a>
+            <a href="study-groups.html">Study Groups</a>
+            <a href="contests.html" class="active">Contests</a>
+            <a href="discuss.html">Discuss</a>
+            <a href="explore.html">Explore</a>
+        </nav>
+    </div>
+    <div class="header-right">
+        <a href="login.html" id="auth-button" class="btn-auth">Log In / Sign Up</a>
+        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+    </div>
+</header>
+
+<main class="container" style="padding: 1rem; height: calc(100vh - 80px);">
+    <div class="contest-container">
+        <!-- Left: Problems & Timer -->
+        <div class="contest-left">
+            <div class="timer" id="timer">00:30:00</div>
+            <div class="problems-list">
+                <h3>Problems</h3>
+                <div id="problems-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Editor -->
+        <div class="contest-right">
+            <div class="editor-header">
+                <h3 id="current-problem-title">Loading...</h3>
+                <p id="current-problem-desc" style="margin: 0; color: var(--text-muted); font-size: 0.9rem;"></p>
+            </div>
+            <div id="ace-editor"></div>
+            <div class="editor-actions">
+                <button class="btn-submit" onclick="submitSolution()">Submit Solution</button>
+                <button class="btn-complete" onclick="completeContest()">Complete Contest</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.13/ace.min.js"></script>
+<script src="js/app.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const contestId = urlParams.get('id');
+
+    let contest = null;
+    let currentProblemId = null;
+    let editor = null;
+    let timerInterval = null;
+    let timeRemaining = 0;
+
+    async function loadContest() {
+      try {
+        const res = await fetch(`/api/contests/${contestId}`);
+        if (!res.ok) throw new Error('Contest not found');
+        contest = await res.json();
+
+        // Start contest if in DRAFT
+        if (contest.status === 'DRAFT') {
+          await startContest();
+        }
+
+        // Initialize editor
+        editor = ace.edit('ace-editor');
+        editor.session.setMode('ace/mode/javascript');
+        editor.setTheme('ace/theme/monokai');
+        editor.setFontSize(14);
+
+        // Display problems
+        displayProblems();
+
+        // Select first problem
+        if (contest.problems && contest.problems.length > 0) {
+          selectProblem(contest.problems[0].id);
+        }
+
+        // Start timer
+        timeRemaining = contest.durationMinutes * 60;
+        startTimer();
+      } catch (e) {
+        alert('Error loading contest: ' + e.message);
+      }
+    }
+
+    async function startContest() {
+      await fetch(`/api/contests/${contestId}/start`, { method: 'POST' });
+    }
+
+    function displayProblems() {
+      const container = document.getElementById('problems-list-container');
+      container.innerHTML = contest.problems.map((p, i) => `
+        <div class="problem-item ${i === 0 ? 'active' : ''}" onclick="selectProblem(${p.id})">
+          <div style="font-weight: 600">${i + 1}. ${p.title}</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted)">${p.difficulty}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectProblem(problemId) {
+      currentProblemId = problemId;
+      const problem = contest.problems.find(p => p.id === problemId);
+
+      document.getElementById('current-problem-title').textContent = problem.title;
+      document.getElementById('current-problem-desc').textContent = `Difficulty: ${problem.difficulty}`;
+
+      // Update active problem
+      document.querySelectorAll('.problem-item').forEach((el, i) => {
+        el.classList.toggle('active', contest.problems[i].id === problemId);
+      });
+
+      // Clear editor for new problem (in real system, load saved code)
+      editor.setValue('');
+    }
+
+    async function submitSolution() {
+      const code = editor.getValue();
+
+      if (!code.trim()) {
+        alert('Please write some code');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/contests/${contestId}/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            problemId: currentProblemId,
+            code: code
+          })
+        });
+
+        if (!res.ok) throw new Error('Failed to submit');
+        alert('✅ Solution submitted!');
+      } catch (e) {
+        alert('Error submitting: ' + e.message);
+      }
+    }
+
+    async function completeContest() {
+      if (confirm('Are you sure you want to end the contest?')) {
+        clearInterval(timerInterval);
+        await fetch(`/api/contests/${contestId}/complete`, { method: 'POST' });
+        alert('Contest completed!');
+        window.location.href = 'contests.html';
+      }
+    }
+
+    function startTimer() {
+      const timerEl = document.getElementById('timer');
+
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+
+        const hours = Math.floor(timeRemaining / 3600);
+        const minutes = Math.floor((timeRemaining % 3600) / 60);
+        const seconds = timeRemaining % 60;
+
+        timerEl.textContent =
+          String(hours).padStart(2, '0') + ':' +
+          String(minutes).padStart(2, '0') + ':' +
+          String(seconds).padStart(2, '0');
+
+        // Warnings
+        if (timeRemaining <= 300) {
+          timerEl.classList.add('warning');
+        }
+        if (timeRemaining <= 60) {
+          timerEl.classList.remove('warning');
+          timerEl.classList.add('danger');
+        }
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          alert('Time\'s up!');
+          completeContest();
+        }
+      }, 1000);
+    }
+
+    loadContest();
+</script>
+</body>
+</html>

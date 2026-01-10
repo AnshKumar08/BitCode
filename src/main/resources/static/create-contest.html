@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeHub - Create Contest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .form-container {
+          max-width: 600px;
+          margin: 0 auto;
+          background: var(--card-bg);
+          padding: 2rem;
+          border-radius: 12px;
+          border: 1px solid var(--border-color);
+        }
+        .form-group {
+          margin-bottom: 1.5rem;
+        }
+        .form-group label {
+          display: block;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          color: var(--text-primary);
+        }
+        .form-group input,
+        .form-group select {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          background: var(--surface);
+          color: var(--text-primary);
+          font-size: 1rem;
+          font-family: inherit;
+          color-scheme: light dark;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(33, 128, 141, 0.1);
+        }
+        .checkbox-group {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 1rem;
+          margin-top: 0.75rem;
+        }
+        .checkbox-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .checkbox-item input {
+          width: auto;
+          cursor: pointer;
+        }
+        .checkbox-item label {
+          margin: 0;
+          font-weight: 400;
+          cursor: pointer;
+        }
+        .btn-group {
+          display: flex;
+          gap: 1rem;
+          margin-top: 2rem;
+        }
+        .btn-primary {
+          flex: 1;
+          padding: 0.75rem;
+          background: var(--primary-color);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s;
+        }
+        .btn-primary:hover {
+          background: var(--primary-color);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(33, 128, 141, 0.3);
+        }
+        .btn-secondary {
+          flex: 1;
+          padding: 0.75rem;
+          background: transparent;
+          color: var(--primary-color);
+          border: 2px solid var(--primary-color);
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+          background: var(--primary-color);
+          color: white;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-left">
+        <h1><a href="study-groups.html">CodeHub</a></h1>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="problem.html">Problems</a>
+            <a href="study-groups.html">Study Groups</a>
+            <a href="contests.html" class="active">Contests</a>
+            <a href="discuss.html">Discuss</a>
+            <a href="explore.html">Explore</a>
+        </nav>
+    </div>
+    <div class="header-right">
+        <a href="login.html" id="auth-button" class="btn-auth">Log In / Sign Up</a>
+        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+    </div>
+</header>
+
+<main class="container" style="padding-top: 2rem">
+    <h2 style="text-align: center; margin-bottom: 2rem">Create New Contest</h2>
+
+    <form id="create-contest-form" class="form-container">
+        <!-- Topics -->
+        <div class="form-group">
+            <label>📚 Select Topics (check at least 1)</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="array" name="topics" value="array">
+                    <label for="array">Array</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="string" name="topics" value="string">
+                    <label for="string">String</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dp" name="topics" value="dp">
+                    <label for="dp">DP</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="graph" name="topics" value="graph">
+                    <label for="graph">Graph</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tree" name="topics" value="tree">
+                    <label for="tree">Tree</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="heap" name="topics" value="heap">
+                    <label for="heap">Heap</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Difficulty -->
+        <div class="form-group">
+            <label for="difficulty">⚡ Difficulty Level</label>
+            <select id="difficulty" required>
+                <option value="">-- Select Difficulty --</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+                <option value="Mixed">Mixed (Random)</option>
+            </select>
+        </div>
+
+        <!-- Number of Questions -->
+        <div class="form-group">
+            <label for="question-count">📝 Number of Questions</label>
+            <input type="number" id="question-count" min="1" max="20" value="5" required>
+        </div>
+
+        <!-- Duration -->
+        <div class="form-group">
+            <label for="duration">⏱️ Contest Duration (minutes)</label>
+            <select id="duration" required>
+                <option value="">-- Select Duration --</option>
+                <option value="30">30 Minutes</option>
+                <option value="60">1 Hour</option>
+                <option value="120">2 Hours</option>
+                <option value="180">3 Hours</option>
+            </select>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <button type="button" class="btn-secondary" onclick="window.location.href='contests.html'">Cancel</button>
+            <button type="submit" class="btn-primary">Create Contest</button>
+        </div>
+    </form>
+</main>
+
+<script src="js/app.js"></script>
+<script>
+    document.getElementById('create-contest-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Get selected topics
+      const selectedTopics = Array.from(document.querySelectorAll('input[name="topics"]:checked'))
+          .map(el => el.value)
+          .join(',');
+
+      if (!selectedTopics) {
+        alert('Please select at least one topic');
+        return;
+      }
+
+      const difficulty = document.getElementById('difficulty').value;
+      const questionCount = parseInt(document.getElementById('question-count').value);
+      const durationMinutes = parseInt(document.getElementById('duration').value);
+
+      if (!difficulty || !durationMinutes) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/contests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topics: selectedTopics,
+            difficulty: difficulty,
+            questionCount: questionCount,
+            durationMinutes: durationMinutes
+          })
+        });
+
+        if (!res.ok) throw new Error('Failed to create contest');
+
+        const contest = await res.json();
+        window.location.href = `contest.html?id=${contest.id}`;
+      } catch (e) {
+        alert('Error creating contest: ' + e.message);
+      }
+    });
+</script>
+</body>
+</html>

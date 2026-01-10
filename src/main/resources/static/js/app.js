@@ -40,109 +40,109 @@ document.addEventListener("DOMContentLoaded", () => {
   // Apply the correct theme as soon as the page loads
   applySavedTheme();
 
-  // --- STUDY GROUP PAGE LOGIC ---
-  // This code only runs if it finds the 'groups-list' element,
-  // meaning we are on the Study Groups page (index.html).
-  const groupsList = document.getElementById("groups-list");
-  if (groupsList) {
-    const createGroupForm = document.getElementById("create-group-form");
-    const showFormBtn = document.getElementById("show-create-form-btn");
-    const cancelBtn = document.getElementById("cancel-create-btn");
-    const API_URL = "/api/groups"; // Your backend endpoint
-
-    /**
-     * Fetches study groups from the backend and displays them.
-     */
-    const fetchAndDisplayGroups = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const groups = await response.json(); // Now using real data
-
-        groupsList.innerHTML = ""; // Clear existing list
-
-        if (groups.length === 0) {
-          groupsList.innerHTML =
-            '<p class="placeholder-content">No study groups found. Why not create one?</p>';
-          return;
-        }
-
-        groups.forEach((group) => {
-          const card = document.createElement("div");
-          card.className = "group-card";
-          card.innerHTML = `
-                        <h3>${group.name}</h3>
-                        <p>${group.description}</p>
-                        <button onclick="joinGroup(${group.id})">Join Group</button>
-                    `;
-          groupsList.appendChild(card);
-        });
-      } catch (error) {
-        console.error("Failed to fetch groups:", error);
-        groupsList.innerHTML =
-          '<p class="placeholder-content">Error loading study groups. Please try again later.</p>';
-      }
-    };
-
-    /**
-     * Handles the submission of the "Create Group" form.
-     */
-    createGroupForm.addEventListener("submit", async (event) => {
-      event.preventDefault(); // Stop form reload
-
-      const nameInput = document.getElementById("group-name");
-      const descriptionInput = document.getElementById("group-description");
-
-      const newGroup = {
-        name: nameInput.value,
-        description: descriptionInput.value,
-      };
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newGroup),
-        });
-
-        if (response.ok) {
-          createGroupForm.reset();
-          createGroupForm.classList.add("hidden");
-          showFormBtn.style.display = "block";
-          fetchAndDisplayGroups(); // Refresh the list
-        } else {
-          alert("Failed to create group. Please check your input.");
-        }
-      } catch (error) {
-        console.error("Error creating group:", error);
-        alert("An error occurred. Please try again.");
-      }
-    });
-
-    // Event listeners for showing/hiding the form
-    showFormBtn.addEventListener("click", () => {
-      createGroupForm.classList.remove("hidden");
-      showFormBtn.style.display = "none";
-    });
-
-    cancelBtn.addEventListener("click", () => {
-      createGroupForm.classList.add("hidden");
-      showFormBtn.style.display = "block";
-      createGroupForm.reset();
-    });
-
-    // Dummy function for joining a group
-    window.joinGroup = (groupId) => {
-      alert(
-        `Joining group with ID: ${groupId}. (Functionality to be implemented)`
-      );
-    };
-
-    // Initial load for the study groups page
-    fetchAndDisplayGroups();
-  }
+//  // --- STUDY GROUP PAGE LOGIC ---
+//  // This code only runs if it finds the 'groups-list' element,
+//  // meaning we are on the Study Groups page (index.html).
+//  const groupsList = document.getElementById("groups-list");
+//  if (groupsList) {
+//    const createGroupForm = document.getElementById("create-group-form");
+//    const showFormBtn = document.getElementById("show-create-form-btn");
+//    const cancelBtn = document.getElementById("cancel-create-btn");
+//    const API_URL = "/api/study-groups"; // Your backend endpoint
+//
+//    /**
+//     * Fetches study groups from the backend and displays them.
+//     */
+//    const fetchAndDisplayGroups = async () => {
+//      try {
+//        const response = await fetch(API_URL);
+//        if (!response.ok) {
+//          throw new Error("Network response was not ok");
+//        }
+//        const groups = await response.json(); // Now using real data
+//
+//        groupsList.innerHTML = ""; // Clear existing list
+//
+//        if (groups.length === 0) {
+//          groupsList.innerHTML =
+//            '<p class="placeholder-content">No study groups found. Why not create one?</p>';
+//          return;
+//        }
+//
+//        groups.forEach((group) => {
+//          const card = document.createElement("div");
+//          card.className = "group-card";
+//          card.innerHTML = `
+//                        <h3>${group.name}</h3>
+//                        <p>${group.description}</p>
+//                        <button onclick="joinGroup(${group.id})">Join Group</button>
+//                    `;
+//          groupsList.appendChild(card);
+//        });
+//      } catch (error) {
+//        console.error("Failed to fetch groups:", error);
+//        groupsList.innerHTML =
+//          '<p class="placeholder-content">Error loading study groups. Please try again later.</p>';
+//      }
+//    };
+//
+//    /**
+//     * Handles the submission of the "Create Group" form.
+//     */
+//    createGroupForm.addEventListener("submit", async (event) => {
+//      event.preventDefault(); // Stop form reload
+//
+//      const nameInput = document.getElementById("group-name");
+//      const descriptionInput = document.getElementById("group-description");
+//
+//      const newGroup = {
+//        name: nameInput.value,
+//        description: descriptionInput.value,
+//      };
+//
+//      try {
+//        const response = await fetch(API_URL, {
+//          method: "POST",
+//          headers: { "Content-Type": "application/json" },
+//          body: JSON.stringify(newGroup),
+//        });
+//
+//        if (response.ok) {
+//          createGroupForm.reset();
+//          createGroupForm.classList.add("hidden");
+//          showFormBtn.style.display = "block";
+//          fetchAndDisplayGroups(); // Refresh the list
+//        } else {
+//          alert("Failed to create group. Please check your input.");
+//        }
+//      } catch (error) {
+//        console.error("Error creating group:", error);
+//        alert("An error occurred. Please try again.");
+//      }
+//    });
+//
+//    // Event listeners for showing/hiding the form
+//    showFormBtn.addEventListener("click", () => {
+//      createGroupForm.classList.remove("hidden");
+//      showFormBtn.style.display = "none";
+//    });
+//
+//    cancelBtn.addEventListener("click", () => {
+//      createGroupForm.classList.add("hidden");
+//      showFormBtn.style.display = "block";
+//      createGroupForm.reset();
+//    });
+//
+//    // Dummy function for joining a group
+//    window.joinGroup = (groupId) => {
+//      alert(
+//        `Joining group with ID: ${groupId}. (Functionality to be implemented)`
+//      );
+//    };
+//
+//    // Initial load for the study groups page
+//    fetchAndDisplayGroups();
+//  }
 
   // --- DISCUSS PAGE LOGIC ---
   // This code only runs if it finds the 'discuss-list-container'

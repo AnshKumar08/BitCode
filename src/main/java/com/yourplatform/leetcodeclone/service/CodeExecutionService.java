@@ -29,10 +29,14 @@ public class CodeExecutionService {
 
     private static final String JUDGE0_BASE_URL = "https://ce.judge0.com/submissions";
 
+    // ✅ FIXED: Accept both string names AND numeric IDs
     private static final Map<String, Integer> LANGUAGE_IDS = Map.of(
             "java", 62,
             "python", 71,
-            "cpp", 54
+            "cpp", 54,
+            "62", 62,      // ← ADD: numeric string IDs
+            "71", 71,
+            "54", 54
     );
 
     // ============= RUN CODE (Single Test) =============
@@ -44,7 +48,8 @@ public class CodeExecutionService {
             String stdin = problem.getTestCaseInput().replace("\\n", "\n");
             String expectedOutput = problem.getTestCaseOutput();
 
-            Integer languageId = LANGUAGE_IDS.get(runRequest.getLanguage().toLowerCase());
+            // ✅ FIXED: Convert language to proper format
+            Integer languageId = convertLanguageToId(runRequest.getLanguage());
             if (languageId == null) {
                 return createErrorResult("Unsupported language: " + runRequest.getLanguage());
             }
@@ -132,7 +137,6 @@ public class CodeExecutionService {
                     CodeRunResult result = runSingleTest(code, language, tc.input);
                     boolean passed = outputsMatch(result.getOutput(), tc.expected);
 
-                    // DEBUG LOGS
                     System.err.println("=== TEST CASE ===");
                     System.err.println("Input: " + tc.input);
                     System.err.println("Expected: '" + tc.expected + "'");
@@ -147,12 +151,12 @@ public class CodeExecutionService {
 
     private CodeRunResult runSingleTest(String code, String language, String customInput) {
         try {
-            Integer languageId = LANGUAGE_IDS.get(language.toLowerCase());
+            // ✅ FIXED: Convert language to ID
+            Integer languageId = convertLanguageToId(language);
             if (languageId == null) {
                 return createErrorResult("Unsupported language: " + language);
             }
 
-            // Properly handle newlines in input
             String stdin = customInput.replace("\\n", "\n");
 
             Judge0SubmissionRequest submission = new Judge0SubmissionRequest(
@@ -190,6 +194,32 @@ public class CodeExecutionService {
         } catch (Exception e) {
             return createErrorResult("Test execution error: " + e.getMessage());
         }
+    }
+
+    // ✅ NEW METHOD: Convert language (string OR numeric) to Judge0 language ID
+    private Integer convertLanguageToId(String language) {
+        if (language == null) {
+            return null;
+        }
+
+        String normalized = language.toLowerCase().trim();
+
+        // Try direct lookup (handles both "java" and "62")
+        if (LANGUAGE_IDS.containsKey(normalized)) {
+            return LANGUAGE_IDS.get(normalized);
+        }
+
+        // Try parsing as integer
+        try {
+            int id = Integer.parseInt(normalized);
+            if (LANGUAGE_IDS.containsKey(String.valueOf(id))) {
+                return id;
+            }
+        } catch (NumberFormatException e) {
+            // Not a number, continue
+        }
+
+        return null;  // Unsupported language
     }
 
     // ============= HELPERS =============

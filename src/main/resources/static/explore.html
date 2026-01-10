@@ -1,75 +1,522 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CodeHub - Explore</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header>
-      <div class="header-left">
-        <h1><a href="index.html">CodeHub</a></h1>
-        <nav>
-          <a href="problem.html">Problems</a>
-          <a href="index.html">Study Groups</a>
-          <a href="contests.html">Contests</a>
-          <a href="discuss.html">Discuss</a>
-          <a href="explore.html" class="active">Explore</a>
-          <a href="profile.html">Profile</a>
-        </nav>
-      </div>
-      <div class="header-right">
-        <a href="login.html" id="auth-button" class="btn-auth"
-          >Log In / Sign Up</a
-        >
-        <button id="theme-toggle-btn" class="theme-btn">🌙</button>
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeHub - Explore Problems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .filter-section {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
 
-    <main class="container">
-      <div class="page-title">
-        <h2>Explore Topics</h2>
-        <p>Curated problem sets to master key concepts.</p>
-      </div>
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-      <div class="explore-grid">
-        <div class="explore-card">
-          <h3>Top Interview Questions</h3>
-          <p>
-            A collection of the most frequently asked questions in tech
-            interviews.
-          </p>
-          <div class="progress-bar">
-            <div class="progress" style="width: 75%"></div>
-          </div>
-          <span>75/100 Completed</span>
-        </div>
-        <div class="explore-card">
-          <h3>Data Structures Crash Course</h3>
-          <p>Master arrays, linked lists, trees, graphs, and more.</p>
-          <div class="progress-bar">
-            <div class="progress" style="width: 40%"></div>
-          </div>
-          <span>20/50 Completed</span>
-        </div>
-        <div class="explore-card">
-          <h3>Dynamic Programming Fundamentals</h3>
-          <p>Learn the patterns to solve any DP problem.</p>
-          <div class="progress-bar">
-            <div class="progress" style="width: 10%"></div>
-          </div>
-          <span>5/50 Completed</span>
+    .filter-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    /* ================= DROPDOWN BASE ================= */
+    .custom-dropdown {
+      position: relative;
+    }
+
+    .dropdown-btn {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .dropdown-btn:hover {
+      border-color: var(--primary-color);
+    }
+
+    /* ================= MENU BASE ================= */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 100%;
+      border-radius: 10px;
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 10000; /* Increased to stay above problem cards */
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      /* Fix: Add a default background using your existing variables */
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+    }
+
+    .dropdown-menu.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ================= MENU BUTTON ================= */
+    .dropdown-menu button {
+      padding: 0.75rem 1rem;
+      border: none;
+      background: transparent; /* This is fine because the parent now has a color */
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      width: 100%; /* Ensure full width clickable area */
+      color: var(--text-primary);
+      display: block;
+    }
+
+        /* LIGHT MODE FALLBACK */
+    [data-color-scheme="light"] .dropdown-menu {
+      background: #ffffff;
+      border: 1px solid #dcdcdc;
+    }
+
+    /* DARK MODE FALLBACK */
+    [data-color-scheme="dark"] .dropdown-menu {
+      background: #2f3645;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+  .dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+  }
+  .dropdown-menu::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 10px;
+  }
+
+    /* ================= LIGHT MODE ================= */
+    [data-color-scheme="light"] .dropdown-menu {
+      background: #ffffff;
+      border: 1px solid #dcdcdc;
+    }
+
+    [data-color-scheme="light"] .dropdown-menu button {
+      color: #111111;
+    }
+
+    [data-color-scheme="light"] .dropdown-menu button:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+
+    /* ================= DARK MODE ================= */
+    [data-color-scheme="dark"] .dropdown-menu {
+      background: #2f3645;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    [data-color-scheme="dark"] .dropdown-menu button {
+      color: #ffffff;
+    }
+
+    [data-color-scheme="dark"] .dropdown-menu button:hover {
+      background: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .dropdown-menu button:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .dropdown-menu button:first-child {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .problem-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .problem-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border-color: var(--primary-color);
+    }
+    .problem-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .problem-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .problem-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .problem-difficulty {
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.8rem;
+      width: fit-content;
+    }
+    .difficulty-easy {
+      background: rgba(76, 175, 80, 0.15);
+      color: #4CAF50;
+    }
+    .difficulty-medium {
+      background: rgba(255, 193, 7, 0.15);
+      color: #FFC107;
+    }
+    .difficulty-hard {
+      background: rgba(244, 67, 54, 0.15);
+      color: #F44336;
+    }
+    .problem-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .stats-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-color);
+      min-width: 150px;
+    }
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .no-problems {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+  </style>
+  <script src="js/auth-guard.js"></script>
+
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <h1><a href="study-groups.html">CodeHub</a></h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="problem.html">Problems</a>
+      <a href="study-groups.html">Study Groups</a>
+      <a href="contests.html">Contests</a>
+      <a href="discuss.html">Discuss</a>
+      <a href="explore.html" class="active">Explore</a>
+
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="login.html" id="auth-button" class="btn-auth">Log In / Sign Up</a>
+    <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+  </div>
+</header>
+
+<main class="container">
+  <div style="margin-bottom: 2rem">
+    <h2>Explore Problems</h2>
+    <p style="color: var(--text-muted)">Discover curated problems by difficulty, category, and company</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="stat-number" id="total-problems">0</div>
+      <div class="stat-label">Total Problems</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="easy-count">0</div>
+      <div class="stat-label">Easy</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="medium-count">0</div>
+      <div class="stat-label">Medium</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="hard-count">0</div>
+      <div class="stat-label">Hard</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-section">
+    <!-- Difficulty Filter -->
+    <div class="filter-group">
+      <label>Difficulty</label>
+      <div class="custom-dropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown('difficulty-dropdown')">
+          <span id="difficulty-label">All Levels</span>
+          <span>▼</span>
+        </button>
+        <div class="dropdown-menu" id="difficulty-dropdown">
+          <button onclick="setFilter('difficulty', '', 'All Levels')">All Levels</button>
+          <button onclick="setFilter('difficulty', 'Easy', 'Easy')">Easy</button>
+          <button onclick="setFilter('difficulty', 'Medium', 'Medium')">Medium</button>
+          <button onclick="setFilter('difficulty', 'Hard', 'Hard')">Hard</button>
         </div>
       </div>
-    </main>
+    </div>
 
-    <script src="js/app.js"></script>
-  </body>
+    <!-- Category Filter -->
+    <div class="filter-group">
+      <label>Category</label>
+      <div class="custom-dropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown('category-dropdown')">
+          <span id="category-label">All Categories</span>
+          <span>▼</span>
+        </button>
+        <div class="dropdown-menu" id="category-dropdown">
+          <button onclick="setFilter('category', '', 'All Categories')">All Categories</button>
+          <button onclick="setFilter('category', 'array', 'Array')">Array</button>
+          <button onclick="setFilter('category', 'string', 'String')">String</button>
+          <button onclick="setFilter('category', 'dp', 'Dynamic Programming')">Dynamic Programming</button>
+          <button onclick="setFilter('category', 'graph', 'Graph')">Graph</button>
+          <button onclick="setFilter('category', 'tree', 'Tree')">Tree</button>
+          <button onclick="setFilter('category', 'heap', 'Heap')">Heap</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Company Filter -->
+    <div class="filter-group">
+      <label>Company</label>
+      <div class="custom-dropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown('company-dropdown')">
+          <span id="company-label">All Companies</span>
+          <span>▼</span>
+        </button>
+        <div class="dropdown-menu" id="company-dropdown">
+          <button onclick="setFilter('company', '', 'All Companies')">All Companies</button>
+          <button onclick="setFilter('company', 'Google', 'Google')">Google</button>
+          <button onclick="setFilter('company', 'Amazon', 'Amazon')">Amazon</button>
+          <button onclick="setFilter('company', 'Meta', 'Meta')">Meta</button>
+          <button onclick="setFilter('company', 'Apple', 'Apple')">Apple</button>
+          <button onclick="setFilter('company', 'Microsoft', 'Microsoft')">Microsoft</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="filter-group">
+      <label>Search</label>
+      <input type="text" id="search-input" placeholder="Search problems..." onkeyup="applyFilters()" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--surface); color: var(--text-primary)">
+    </div>
+  </div>
+
+  <!-- Problems Grid -->
+  <div class="problems-grid" id="problems-container">
+    <!-- Populated by JS -->
+  </div>
+
+  <div id="no-results" class="no-problems" style="display:none">
+    <p>No problems found matching your filters.</p>
+  </div>
+</main>
+
+<script src="js/app.js"></script>
+<script>
+  let allProblems = [];
+  let currentFilters = {
+    difficulty: '',
+    category: '',
+    company: '',
+    search: ''
+  };
+
+  async function loadProblems() {
+    try {
+      const res = await fetch('/api/problems/all');
+      if (!res.ok) throw new Error('Failed to load problems');
+      allProblems = await res.json();
+      updateStats();
+      displayProblems(allProblems);
+    } catch (e) {
+      console.error('Error loading problems:', e);
+    }
+  }
+
+  function updateStats() {
+    const easy = allProblems.filter(p => p.difficulty === 'Easy').length;
+    const medium = allProblems.filter(p => p.difficulty === 'Medium').length;
+    const hard = allProblems.filter(p => p.difficulty === 'Hard').length;
+
+    document.getElementById('total-problems').textContent = allProblems.length;
+    document.getElementById('easy-count').textContent = easy;
+    document.getElementById('medium-count').textContent = medium;
+    document.getElementById('hard-count').textContent = hard;
+  }
+
+  function toggleDropdown(id) {
+    const menu = document.getElementById(id);
+
+    // Close others
+    document.querySelectorAll('.dropdown-menu.active').forEach(el => {
+      if (el !== menu) el.classList.remove('active');
+    });
+
+    menu.classList.toggle('active');
+  }
+
+  function setFilter(type, value, label) {
+    currentFilters[type] = value;
+    document.getElementById(type + '-label').textContent = label;
+    document.getElementById(type + '-dropdown').classList.remove('active');
+    applyFilters();
+  }
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-dropdown')) {
+      document.querySelectorAll('.dropdown-menu.active')
+        .forEach(el => el.classList.remove('active'));
+    }
+  });
+
+
+
+<!--  function setFilter(type, value, label) {-->
+<!--    currentFilters[type] = value;-->
+<!--    document.getElementById(type + '-label').textContent = label;-->
+<!--    document.getElementById(type + '-dropdown').classList.remove('active');-->
+<!--    applyFilters();-->
+<!--  }-->
+
+  function displayProblems(problems) {
+    const container = document.getElementById('problems-container');
+    const noResults = document.getElementById('no-results');
+
+    if (problems.length === 0) {
+      container.innerHTML = '';
+      noResults.style.display = 'block';
+      return;
+    }
+
+    noResults.style.display = 'none';
+    container.innerHTML = problems.map(p => `
+      <div class="problem-card" onclick="goToProblem(${p.id})">
+        <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem">
+          <div class="problem-title">${p.title}</div>
+          <div class="problem-difficulty difficulty-${p.difficulty.toLowerCase()}">
+            ${p.difficulty}
+          </div>
+        </div>
+        <div class="problem-desc">${p.description}</div>
+        <div class="problem-tags">
+          ${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        </div>
+        <div class="problem-stats">
+          <span>👍 ${p.likes} Likes</span>
+          <span>💬 ${p.discussions} Discussions</span>
+          <span>✅ ${p.solved} Solved</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function applyFilters() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    currentFilters.search = search;
+
+    let filtered = allProblems.filter(p => {
+      const matchDifficulty = !currentFilters.difficulty || p.difficulty === currentFilters.difficulty;
+      const matchCategory = !currentFilters.category || p.tags.some(tag => tag.toLowerCase().includes(currentFilters.category));
+      const matchCompany = !currentFilters.company || p.company === currentFilters.company;
+      const matchSearch = !search || p.title.toLowerCase().includes(search);
+
+      return matchDifficulty && matchCategory && matchCompany && matchSearch;
+    });
+
+    // Add this line to update stats based on what the user sees
+    updateLiveStats(filtered);
+    displayProblems(filtered);
+}
+
+  function updateLiveStats(filteredList) {
+      const easy = filteredList.filter(p => p.difficulty === 'Easy').length;
+      const medium = filteredList.filter(p => p.difficulty === 'Medium').length;
+      const hard = filteredList.filter(p => p.difficulty === 'Hard').length;
+
+      document.getElementById('total-problems').textContent = filteredList.length;
+      document.getElementById('easy-count').textContent = easy;
+      document.getElementById('medium-count').textContent = medium;
+      document.getElementById('hard-count').textContent = hard;
+  }
+
+  function goToProblem(id) {
+    window.location.href = `problem.html?id=${id}`;
+  }
+
+  // Close dropdowns on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-dropdown')) {
+      document.querySelectorAll('.dropdown-menu.active').forEach(el => el.classList.remove('active'));
+    }
+  });
+
+  loadProblems();
+
+</script>
+</body>
 </html>

@@ -40,6 +40,12 @@ public class ProblemService {
         dto.setTitle(problem.getTitle());
         dto.setTopic(problem.getTopic());
         dto.setDifficulty(problem.getDifficulty());
+        dto.setDescription(problem.getDescription());
+        dto.setTags(problem.getTags() != null ? problem.getTags().split(",") : new String[]{});
+        dto.setCompany(problem.getCompany());
+        dto.setLikes(problem.getLikes() != null ? problem.getLikes() : 0);
+        dto.setDiscussions(problem.getDiscussions() != null ? problem.getDiscussions() : 0);
+        dto.setSolved(problem.getSolved() != null ? problem.getSolved() : 0);
         return dto;
     }
 

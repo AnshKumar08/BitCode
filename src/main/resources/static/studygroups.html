@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeHub - Study Groups</title>
+    <link rel="stylesheet" href="css/studygroups.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">CodeHub</a>
+        <ul class="nav-menu">
+            <li><a href="/index.html">Dashboard</a></li>
+            <li><a href="/problems">Problems</a></li>
+            <li><a href="/study-groups" class="active">Study Groups</a></li>
+            <li><a href="/contests">Contests</a></li>
+            <li><a href="/discuss">Discuss</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="main-container">
+    <!-- Left Sidebar: My Groups -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>My Groups</h3>
+            <button class="btn-create-group" id="openCreateModal">+ Create</button>
+        </div>
+
+        <div id="myGroupsList" class="groups-list">
+            <!-- Groups will load here -->
+        </div>
+
+        <div class="sidebar-footer">
+            <hr>
+            <h4>Explore Groups</h4>
+            <input type="text" id="searchGroups" placeholder="Search public groups..." class="search-input">
+            <div id="exploreGroupsList" class="groups-list">
+                <!-- Public groups will load here -->
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+        <div id="groupDetail" class="group-detail">
+            <!-- Group header -->
+            <div class="group-header">
+                <div>
+                    <h1 id="groupName">Select a Group</h1>
+                    <p id="groupDescription" class="group-description"></p>
+                    <span id="memberCount" class="member-count">0 members</span>
+                </div>
+                <div class="group-actions">
+                    <button id="joinBtn" class="btn btn-primary" style="display:none;">Join Group</button>
+                    <button id="leaveBtn" class="btn btn-danger" style="display:none;">Leave Group</button>
+                </div>
+            </div>
+
+            <!-- Members Section -->
+            <div class="members-section">
+                <h3>Members (<span id="memberCountSpan">0</span>)</h3>
+                <div id="membersList" class="members-grid">
+                    <!-- Members will load here -->
+                </div>
+            </div>
+
+            <!-- Create Post -->
+            <div class="create-post">
+                <h3>Start a Discussion</h3>
+                <input type="text" id="postTitle" placeholder="Post title..." class="post-input">
+                <textarea id="postContent" placeholder="Share your thoughts, code, or questions..." class="post-textarea"></textarea>
+                <button id="createPostBtn" class="btn btn-primary">Post</button>
+            </div>
+
+            <!-- Posts Feed -->
+            <div class="posts-section">
+                <h3>Group Discussion</h3>
+                <div id="postsFeed" class="posts-feed">
+                    <!-- Posts will load here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+            <div class="empty-icon">📚</div>
+            <h2>No Group Selected</h2>
+            <p>Join a group or create a new one to start collaborating!</p>
+        </div>
+    </main>
+</div>
+
+<!-- Create Group Modal -->
+<div id="createGroupModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create Study Group</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="text" id="groupNameInput" placeholder="Group Name" class="input-field">
+            <textarea id="groupDescInput" placeholder="Group Description" class="input-field textarea"></textarea>
+            <div class="visibility-options">
+                <label>
+                    <input type="radio" name="visibility" value="PUBLIC" checked>
+                    <span>Public (Anyone can join)</span>
+                </label>
+                <label>
+                    <input type="radio" name="visibility" value="PRIVATE">
+                    <span>Private (Invite only)</span>
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelCreateBtn">Cancel</button>
+            <button class="btn btn-primary" id="confirmCreateBtn">Create Group</button>
+        </div>
+    </div>
+</div>
+
+<!-- Comment Modal -->
+<div id="commentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Comment</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <textarea id="commentText" placeholder="Your comment..." class="input-field textarea"></textarea>
+            <div class="code-section">
+                <label>Add Code Snippet (Optional)</label>
+                <select id="codeLanguage" class="input-field">
+                    <option value="java">Java</option>
+                    <option value="python">Python</option>
+                    <option value="cpp">C++</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="c">C</option>
+                </select>
+                <textarea id="codeSnippet" placeholder="Paste your code here..." class="input-field textarea code-input"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelCommentBtn">Cancel</button>
+            <button class="btn btn-primary" id="confirmCommentBtn">Post Comment</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/studygroups.js"></script>
+</body>
+</html>

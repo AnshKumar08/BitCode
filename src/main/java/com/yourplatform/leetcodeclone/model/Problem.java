@@ -27,10 +27,25 @@ public class Problem {
     @Column(columnDefinition = "TEXT")
     private String starterCodeCpp;
 
-    // --- NEW FIELDS ---
+    // --- TEST CASES ---
     @Column(columnDefinition = "TEXT")
-    private String testCaseInput; // e.g., "[2,7,11,15]\n9" (for Two Sum)
+    private String testCaseInput; // e.g., "[2,7,11,15]\n9"
 
     @Column(columnDefinition = "TEXT")
-    private String testCaseOutput; // e.g., "[0, 1]" (the expected answer)
+    private String testCaseOutput; // e.g., "[0, 1]"
+
+    // --- EXPLORE PAGE FIELDS (NEW) ---
+    @Column(columnDefinition = "TEXT")
+    private String tags; // comma-separated: "array,hash,two-pointer"
+
+    private String company; // "Google", "Amazon", "Meta", etc.
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer likes = 0;
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer discussions = 0;
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer solved = 0;
 }

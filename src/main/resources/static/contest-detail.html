@@ -3,19 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeHub - Problem</title>
+    <title>CodeHub - Contest</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/theme-monokai.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/theme-chrome.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/mode-java.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/mode-python.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/mode-c_cpp.js"></script>
+    <script src="js/auth-guard.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --accent-color: #2196F3;
+            --card-bg: #ffffff;
+            --editor-bg: #ffffff;
+            --editor-text: #1a1a1a;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #333333;
+            --accent-color: #3b82f6;
+            --card-bg: #1e1e1e;
+            --editor-bg: #0f0f0f;
+            --editor-text: #e2e8f0;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+        }
+
         .main-container {
             padding: 2rem 1rem;
             max-width: none;
-            background: var(--bg-color);
+            background: var(--bg-primary);
             min-height: calc(100vh - 80px);
         }
 
@@ -29,35 +66,30 @@
             box-shadow: 0 25px 80px -12px rgba(0,0,0,0.4);
         }
 
-        /* LEFT PANEL: Problem (Dark) */
+        /* LEFT PANEL: Problem Description */
         .problem-panel {
             flex: 0 0 42%;
-            background: linear-gradient(145deg, #1e1e1e, #0f0f0f);
-            border-right: 2px solid #333;
+            background: var(--card-bg);
+            border-right: 2px solid var(--border-color);
             padding: 2.5rem;
             overflow-y: auto;
             position: relative;
+        }
+
+        [data-theme="dark"] .problem-panel {
+            background: linear-gradient(145deg, #1e1e1e, #0f0f0f);
+            border-right: 2px solid #333;
         }
 
         .problem-panel::-webkit-scrollbar {
             width: 6px;
         }
         .problem-panel::-webkit-scrollbar-track {
-            background: #1a1a1a;
+            background: var(--bg-secondary);
         }
         .problem-panel::-webkit-scrollbar-thumb {
-            background: #555;
+            background: var(--border-color);
             border-radius: 3px;
-        }
-
-        .problem-panel::before {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, #444, transparent);
         }
 
         .problem-header {
@@ -66,16 +98,15 @@
             gap: 1rem;
             margin-bottom: 2.5rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid #333;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .problem-title {
             font-size: 2.2rem;
             font-weight: 800;
-            color: #e2e8f0;
+            color: var(--text-primary);
             line-height: 1.2;
             flex: 1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .difficulty-tag {
@@ -110,11 +141,11 @@
         .problem-content {
             font-size: 1.05rem;
             line-height: 1.75;
-            color: #cbd5e1;
+            color: var(--text-secondary);
         }
 
         .problem-content h2, .problem-content h3 {
-            color: #f1f5f9;
+            color: var(--text-primary);
             margin: 2.5rem 0 1.25rem 0;
             font-weight: 700;
         }
@@ -128,7 +159,7 @@
         }
 
         .problem-content strong {
-            color: #f8fafc;
+            color: var(--text-primary);
         }
 
         .problem-content code {
@@ -140,8 +171,14 @@
             border: 1px solid #475569;
         }
 
+        [data-theme="light"] .problem-content code {
+            background: #f5f5f5;
+            color: #1976d2;
+            border: 1px solid #e0e0e0;
+        }
+
         .problem-content pre {
-            background: #0f111a;
+            background: var(--editor-bg);
             padding: 2.25rem;
             border-radius: 20px;
             border-left: 5px solid #3b82f6;
@@ -149,13 +186,13 @@
             margin: 2.5rem 0;
             font-size: 0.98rem;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            border: 1px solid #1e293b;
+            border: 1px solid var(--border-color);
         }
 
-        /* RIGHT PANEL: Editor (Pure Dark) */
+        /* RIGHT PANEL: Editor */
         .editor-panel {
             flex: 1;
-            background: #0a0a0a;
+            background: var(--editor-bg);
             display: flex;
             flex-direction: column;
             border-radius: 0 24px 24px 0;
@@ -167,34 +204,38 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            background: #0f0f0f;
+            background: var(--editor-bg);
         }
 
         .editor-toolbar {
             padding: 1.75rem 3rem;
-            background: linear-gradient(180deg, #1a1a1a 0%, #111 100%);
-            border-bottom: 1px solid #333;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(20px);
+        }
+
+        [data-theme="dark"] .editor-toolbar {
+            background: linear-gradient(180deg, #1a1a1a 0%, #111 100%);
+            border-bottom: 1px solid #333;
         }
 
         .language-group {
             display: flex;
             align-items: center;
             gap: 1.25rem;
-            color: #94a3b8;
+            color: var(--text-secondary);
             font-weight: 600;
             font-size: 1rem;
         }
 
         #language-select {
             padding: 1rem 1.75rem;
-            border: 2px solid #334155;
+            border: 2px solid var(--border-color);
             border-radius: 16px;
-            background: #1e1e1e;
-            color: #f1f5f9;
+            background: var(--card-bg);
+            color: var(--text-primary);
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
@@ -204,14 +245,12 @@
 
         #language-select:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--accent-color);
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-            background: #252525;
         }
 
         #language-select:hover {
-            border-color: #475569;
-            background: #252525;
+            border-color: var(--accent-color);
         }
 
         .action-buttons {
@@ -235,7 +274,6 @@
             overflow: hidden;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            backdrop-filter: blur(20px);
         }
 
         .btn::before {
@@ -269,29 +307,37 @@
             box-shadow: 0 20px 50px rgba(29, 78, 216, 0.5);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         #code-editor {
             flex: 1;
             font-size: 15px !important;
             font-family: 'Fira Code', 'JetBrains Mono', monospace !important;
-            background: #0f0f0f !important;
+            background: var(--editor-bg) !important;
         }
 
         .results-section {
             padding: 3rem 2.5rem;
-            border-top: 1px solid #333;
-            background: linear-gradient(180deg, #1a1a1a 0%, #111 100%);
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
             min-height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #94a3b8;
+            color: var(--text-secondary);
             font-size: 1.1rem;
             text-align: center;
+            flex-direction: column;
         }
 
         .verdict-container {
             text-align: center;
             padding: 3rem;
+            width: 100%;
         }
 
         .verdict-badge {
@@ -301,7 +347,6 @@
             border-radius: 24px;
             margin-bottom: 2rem;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            backdrop-filter: blur(20px);
         }
 
         .verdict-accepted {
@@ -316,19 +361,19 @@
             border: 3px solid rgba(239, 68, 68, 0.6);
         }
 
-        .outputs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+        .verdict-error {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(192, 132, 16, 0.2));
+            color: #f97316;
+            border: 3px solid rgba(249, 115, 22, 0.6);
         }
 
         .output-panel {
-            background: #1a1a1a;
+            background: var(--card-bg);
             border-radius: 20px;
             padding: 2.25rem;
-            border: 1px solid #333;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
         }
 
         .output-header {
@@ -336,59 +381,70 @@
             margin-bottom: 1.5rem;
             font-size: 1.15rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid #444;
+            border-bottom: 2px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            color: #f1f5f9;
+            color: var(--text-primary);
         }
-
-        .your-output { border-bottom-color: #3b82f6; }
-        .expected-output { border-bottom-color: #22c55e; }
-        .error-output { border-bottom-color: #ef4444; }
 
         .output-content {
             font-family: 'Fira Code', monospace;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.6;
             white-space: pre-wrap;
             word-break: break-all;
-            min-height: 120px;
-            color: #e2e8f0;
-            background: #111;
+            min-height: 80px;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
             padding: 1.75rem;
             border-radius: 16px;
-            border: 1px solid #2d2d2d;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         /* Responsive */
         @media (max-width: 1400px) {
             .split-view { flex-direction: column; height: auto; }
-            .problem-panel { max-width: none; flex: none; }
+            .problem-panel { max-width: none; flex: none; max-height: 50vh; }
+            .editor-panel { flex: 1; }
         }
 
         @media (max-width: 768px) {
             .split-view { border-radius: 16px; }
+            .problem-panel { max-height: 400px; }
             .action-buttons { flex-direction: column; gap: 1rem; }
-            .btn { width: 100%; justify-content: center; }
-            .outputs-grid { grid-template-columns: 1fr; }
-            .problem-panel { padding: 1.5rem; }
+            .btn { width: 100%; justify-content: center; padding: 0.875rem 1.5rem; }
+            .problem-title { font-size: 1.6rem; }
+            .editor-toolbar { padding: 1rem 1.5rem; flex-direction: column; gap: 1rem; align-items: flex-start; }
+            .language-group { width: 100%; }
+            #language-select { width: 100%; }
         }
     </style>
-
-
-
 </head>
 <body>
 <header>
     <div class="header-left">
-        <h1><a href="study-groups.html">CodeHub</a></h1>
+        <h1><a href="index.html">CodeHub</a></h1>
         <nav>
             <a href="index.html">Dashboard</a>
-            <a href="problem.html" class="active">Problems</a>
+            <a href="problem.html">Problems</a>
             <a href="study-groups.html">Study Groups</a>
-            <a href="contests.html">Contests</a>
+            <a href="contests.html" class="active">Contests</a>
             <a href="discuss.html">Discuss</a>
             <a href="explore.html">Explore</a>
         </nav>
@@ -417,12 +473,12 @@
             <!-- Editor -->
             <div class="editor-section">
                 <div class="editor-toolbar">
-                    <div class="toolbar-left">
+                    <div class="language-group">
                         <label>Language:</label>
                         <select id="language-select">
-                            <option value="java">Java</option>
-                            <option value="python">Python</option>
-                            <option value="cpp">C++</option>
+                            <option value="62">Java</option>
+                            <option value="71">Python</option>
+                            <option value="54">C++</option>
                         </select>
                     </div>
                     <div class="action-buttons">
@@ -430,7 +486,7 @@
                             <span>▶</span> Run
                         </button>
                         <button id="submit-btn" class="btn btn-submit">
-                            Submit
+                            ✅ Submit
                         </button>
                     </div>
                 </div>
@@ -439,19 +495,13 @@
 
             <!-- Results -->
             <div id="output-console" class="results-section">
-                Click "Run" to test your code.
+                <p>Click "Run" to test your code.</p>
             </div>
         </div>
     </div>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/ace.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/theme-monokai.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/theme-chrome.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/mode-java.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/mode-python.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/mode-c_cpp.js"></script>
-
 <script src="js/app.js"></script>
+<script src="js/contest-detail.js"></script>
 </body>
 </html>

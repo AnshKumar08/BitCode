@@ -42,4 +42,11 @@ public class CodeExecutionController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/execute")
+    public ResponseEntity<CodeRunResult> executeContestCode(@RequestBody CodeRunRequest runRequest) {
+        CodeRunResult result = codeExecutionService.runCode(runRequest);  // ← Reuses existing!
+        return ResponseEntity.ok(result);
+    }
+
+
 }

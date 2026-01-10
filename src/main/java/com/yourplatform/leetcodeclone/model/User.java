@@ -1,9 +1,12 @@
 package com.yourplatform.leetcodeclone.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,5 +31,18 @@ public class User {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     // @JsonBackReference removed
+    @JsonIgnore
     private Set<StudyGroup> studyGroups = new HashSet<>();
+
+    private String firstName;
+    private String lastName;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime lastLogin;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
 }
